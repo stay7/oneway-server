@@ -7,36 +7,28 @@ export class WordController {
    * 단어 수 변경이 생기면 group length 변경
    */
   //TODO: Get word
-  @Get()
-  getWord(): Word {}
-
+  // @Get()
+  // getWord(): Word {}
   //TODO: Add word
-  @Post()
-  addWord(): Word {}
-
+  // @Post()
+  // addWord(): Word {}
   //TODO: Update word
-  @Patch()
-  updateWord(): Word {}
-
+  // @Patch()
+  // updateWord(): Word {}
   //TODO: Move group
-  @Patch()
-  moveWord(): Word {}
-
+  // @Patch()
+  // moveWord(): Word {}
   //TODO: Delete word
-  @Delete()
-  deleteWord(): boolean {}
-
+  // @Delete()
+  // deleteWord(): boolean {}
   //TODO: Mark done
-  @Patch()
-  markWord(): Word {}
-
+  // @Patch()
+  // markWord(): Word {}
   //TODO; Unmark done
-  @Patch()
-  unmarkWord(): Word {}
-
+  // @Patch()
+  // unmarkWord(): Word {}
   //TODO: Add notify
   // addNotify(): Notify {}
-
   //TODO: Cancel notify
   // cancelNotify(): Notify {}
 }

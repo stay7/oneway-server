@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Group } from 'src/group/group.entity';
-import { User } from 'src/user/user.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { AuthModules } from '../auth/auth.modules';
 
 @Module({
-  imports: [TypeOrmModule.forRoot()],
+  imports: [TypeOrmModule.forRoot(), ConfigModule.forRoot(), AuthModules],
   controllers: [AppController],
   providers: [AppService],
 })
