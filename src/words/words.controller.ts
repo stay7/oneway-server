@@ -2,23 +2,23 @@ import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { Word } from './word.entity';
 
 @Controller()
-export class WordController {
+export class WordsController {
   /**
-   * 단어 수 변경이 생기면 group length 변경
+   * 단어 수 변경이 생기면 groups length 변경
    */
-  //TODO: Get word
+  //TODO: Get words
   // @Get()
   // getWord(): Word {}
-  //TODO: Add word
+  //TODO: Add words
   // @Post()
   // addWord(): Word {}
-  //TODO: Update word
+  //TODO: Update words
   // @Patch()
   // updateWord(): Word {}
-  //TODO: Move group
+  //TODO: Move groups
   // @Patch()
   // moveWord(): Word {}
-  //TODO: Delete word
+  //TODO: Delete words
   // @Delete()
   // deleteWord(): boolean {}
   //TODO: Mark done

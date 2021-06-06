@@ -15,6 +15,7 @@ export class AuthConroller {
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
   googleAuthRedirect(@Req() req) {
+    console.log('google redirect', req);
     return this.authService.googleLogin(req);
   }
 }
