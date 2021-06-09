@@ -1,14 +1,16 @@
-const SnakeNamingStrategy =
-  require('typeorm-naming-strategies').SnakeNamingStrategy;
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-module.exports = {
+const config: TypeOrmModuleOptions = {
   type: 'postgres',
   host: 'localhost',
   port: 5432,
   username: 'sangmin',
   password: 'tkdals95',
   database: 'relay',
-  entities: ['./dist/**/*.entity{.ts,.js}'],
+  autoLoadEntities: true,
   synchronize: true, //TODO: production에서는 false로 할 것
   namingStrategy: new SnakeNamingStrategy(),
 };
+
+export = config;

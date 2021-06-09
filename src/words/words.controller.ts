@@ -1,15 +1,25 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
 import { Word } from './word.entity';
+import { WordsService } from './words.service';
+import { CreateWordDto } from './dto/create-word.dto';
 
-@Controller()
+@Controller('words')
 export class WordsController {
   /**
    * 단어 수 변경이 생기면 groups length 변경
    */
+
+  constructor(private wordService: WordsService) {}
+
+  @Post()
+  createWord(@Body() createWordDto: CreateWordDto): Promise<Word> {
+    return this.wordService.createWord(createWordDto);
+  }
+
   //TODO: Get words
   // @Get()
   // getWord(): Word {}
-  //TODO: Add words
+  //TODO: Add words954
   // @Post()
   // addWord(): Word {}
   //TODO: Update words
