@@ -7,6 +7,7 @@ export class WordsRepository extends Repository<Word> {
   constructor() {
     super();
   }
+
   async createWord(createWordDto: CreateWordDto): Promise<Word> {
     const { name, meaning, usage } = createWordDto;
     const word = this.create({

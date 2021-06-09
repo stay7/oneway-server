@@ -12,8 +12,8 @@ export class Group {
   @PrimaryGeneratedColumn()
   groupId: number;
 
-  @Column()
-  userId: string;
+  // @Column()
+  // userId: string;
 
   @Column()
   name: string;

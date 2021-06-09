@@ -1,7 +1,16 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { Group } from './group.entity';
+import { GroupsService } from './groups.service';
+import { CreateGroupDto } from './dto/create-group.dto';
 
-@Controller()
+@Controller('groups')
 export class GroupsController {
+  constructor(private groupsService: GroupsService) {}
+
+  @Post()
+  createGroups(@Body() createGroupDto: CreateGroupDto): Promise<Group> {
+    return this.groupsService.createGroup(createGroupDto);
+  }
   //TODO: Get groups
   //동기화 할 때 단어를 덮어써야하기에 단어도 줘야한다.
   //TODO: Get lastes groups (client_last_modified_date)
