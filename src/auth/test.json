@@ -1,0 +1,9 @@
+{"message":"User information from google",
+  "user":{
+    "email":"codelatte20@gmail.com",
+    "firstName":"상민",
+    "lastName":"서",
+    "picture":"https://lh3.googleusercontent.com/a/AATXAJytHbsuPMst5gTEpTal2Bj5cn3Sl46Ag4SeSAMB=s96-c",
+    "accessToken":"ya29.a0AfH6SMB0qZwQ8vBEJdvLPyOHZZlynwTr9NBOoN2eThYZOAyA9j1frRxPvnw1czAz9p51OZ7K2QuRXi5lgSl-vn0WAFpj8Dfwk_pvrtchXAAMY52Jm8lXjbHUbXPcBHSlVdDzT1FO4JP2vQj7PX3vu-KuwBoS"
+  }
+}

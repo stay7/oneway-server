@@ -15,23 +15,8 @@ export class User {
   @Column()
   email: string;
 
-  @Column()
-  password: string;
-
-  @Column({ nullable: true })
-  facebookId: string;
-
-  @Column({ nullable: true })
-  googleId: string;
-
-  @Column({ nullable: true })
-  appleId: string;
-
-  @Column({ nullable: true })
-  kakaoId: string;
-
-  @Column({ nullable: true })
-  naverId: string;
+  // @Column()
+  // password: string;
 
   @Column({ nullable: true })
   timezone: string;

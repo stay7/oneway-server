@@ -9,6 +9,7 @@ import { GroupsModule } from './groups/groups.module';
   imports: [
     TypeOrmModule.forRoot(ormConfig),
     ConfigModule.forRoot(),
+    AuthModules,
     WordsModule,
     GroupsModule,
   ],
