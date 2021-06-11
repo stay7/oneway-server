@@ -11,7 +11,7 @@ import { Optional } from '@nestjs/common';
 @Entity()
 export class Word {
   @PrimaryGeneratedColumn()
-  wordId: number;
+  id: number;
 
   @Column()
   name: string;

@@ -19,9 +19,16 @@ export class AuthController {
     return this.authService.googleLogin(req);
   }
 
-  @Post('kakao')
+  @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuth(@Req() req) {
-    console.log('kakao', req);
+    console.log('kakao');
+  }
+
+  @Get('kakao/redirect')
+  @UseGuards(AuthGuard('kakao'))
+  kakaoAuthRedirect(@Req() req) {
+    console.log('auth/kakao/redirect');
+    return this.authService.kakaoLogin(req);
   }
 }

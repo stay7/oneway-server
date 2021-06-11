@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -10,13 +11,7 @@ import {
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  userId: string;
-
-  @Column()
-  email: string;
-
-  // @Column()
-  // password: string;
+  id: string;
 
   @Column({ nullable: true })
   timezone: string;

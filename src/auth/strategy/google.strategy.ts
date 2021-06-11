@@ -14,7 +14,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'http://localhost:3000/auth/google/redirect',
+      callbackURL: process.env.GOOGLE_CALLBACK,
       scope: ['email', 'profile'],
     });
   }
@@ -28,13 +28,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     const { id, emails } = profile;
     const { value, verified } = emails[0];
 
-    if (verified) {
-      const user = await this.usersRepository.createUser({
-        email: value,
-        provider: AuthProvider.GOOGLE,
-        providerKey: id,
-      });
-      done(null, user);
-    }
+    // i;
+    //
+    // const user = await this.usersRepository.createUser({
+    //   provider: AuthProvider.GOOGLE,
+    //   providerKey: id,
+    //   email: verified && value,
+    // });
+    // done(null, user);
   }
 }

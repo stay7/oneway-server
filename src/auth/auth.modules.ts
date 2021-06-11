@@ -7,12 +7,13 @@ import { AuthController } from './auth.controller';
 import { KakaoStrategy } from './strategy/kakao.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/users.repository';
+import { AuthRepository } from './auth.repository';
 
 @Module({
   imports: [
     UsersModules,
     PassportModule,
-    TypeOrmModule.forFeature([UsersRepository]),
+    TypeOrmModule.forFeature([UsersRepository, AuthRepository]),
   ],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, KakaoStrategy],

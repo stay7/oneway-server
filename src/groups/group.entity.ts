@@ -10,7 +10,7 @@ import {
 @Entity()
 export class Group {
   @PrimaryGeneratedColumn()
-  groupId: number;
+  id: number;
 
   // @Column()
   // userId: string;
