@@ -19,10 +19,14 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   }
 
   async validate(accessToken, refreshToken, profile, done) {
+    console.log('kakao validate');
     const { id } = profile;
 
-    const auth = await this.authRepository.findOne(id);
+    const auth = await this.authRepository.findOne(id, {
+      relations: ['user'],
+    });
     if (auth) {
+      console.log('auth', auth);
       done(null, auth.user);
     } else {
       const createAuthDto: CreateAuthDto = {

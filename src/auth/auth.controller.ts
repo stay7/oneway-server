@@ -1,6 +1,15 @@
-import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -22,13 +31,24 @@ export class AuthController {
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuth(@Req() req) {
-    console.log('kakao');
+    console.log('auth/kakao');
   }
 
   @Get('kakao/redirect')
   @UseGuards(AuthGuard('kakao'))
-  kakaoAuthRedirect(@Req() req) {
-    console.log('auth/kakao/redirect');
-    return this.authService.kakaoLogin(req);
+  kakaoAuthRedirect(@Req() req, @Res() res) {
+    //여기서 code를 주고
+    const [id, code] = this.authService.issueCode(req);
+    return res.redirect(`relay://success?id=${id}&code=${code}`);
+  }
+
+  // device_id, code를 받음.
+  // code 검증 후 access, refresh 토큰 발급
+  @Post('login')
+  @UseGuards(AuthGuard('jwt'))
+  login(@Body() loginDto: LoginDto) {
+    const { id, deviceId } = loginDto;
+    const [accessToken, refreshToken] = this.authService.issueToken(loginDto);
+    return { accessToken, refreshToken };
   }
 }
