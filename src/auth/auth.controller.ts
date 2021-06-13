@@ -18,14 +18,14 @@ export class AuthController {
   @Get('google')
   @UseGuards(AuthGuard('google'))
   async googleAuth(@Req() req) {
-    // console.log(req.user);
+    console.log('google');
   }
 
   @Get('google/redirect')
   @UseGuards(AuthGuard('google'))
-  googleAuthRedirect(@Req() req) {
-    const { email } = req.user;
-    return this.authService.googleLogin(req);
+  googleAuthRedirect(@Req() req, @Res() res) {
+    const [id, code] = this.authService.issueCode(req);
+    return res.redirect(`relay://success?id=${id}&code=${code}`);
   }
 
   @Get('kakao')
@@ -34,10 +34,12 @@ export class AuthController {
     console.log('auth/kakao');
   }
 
+  /*
+    login을 위한 code(jwt)를 발급
+   */
   @Get('kakao/redirect')
   @UseGuards(AuthGuard('kakao'))
   kakaoAuthRedirect(@Req() req, @Res() res) {
-    //여기서 code를 주고
     const [id, code] = this.authService.issueCode(req);
     return res.redirect(`relay://success?id=${id}&code=${code}`);
   }
@@ -47,7 +49,6 @@ export class AuthController {
   @Post('login')
   @UseGuards(AuthGuard('jwt'))
   login(@Body() loginDto: LoginDto) {
-    const { id, deviceId } = loginDto;
     const [accessToken, refreshToken] = this.authService.issueToken(loginDto);
     return { accessToken, refreshToken };
   }

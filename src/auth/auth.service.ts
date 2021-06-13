@@ -1,9 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
+import { CreateAuthDto } from './dto/create-auth.dto';
+import { User } from '../users/user.entity';
+import { Auth } from './auth.entity';
 
 @Injectable()
 export class AuthService {
@@ -15,15 +18,16 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  googleLogin(req) {
-    if (!req.user) {
-      return 'No users from google';
-    }
+  async getAuth(id: string): Promise<Auth> {
+    const auth = await this.authRepository.findOne(id, { relations: ['user'] });
+    console.log(auth);
+    return auth;
+  }
 
-    return {
-      message: 'User information from google',
-      user: req.user,
-    };
+  async signUp(createAuthDto: CreateAuthDto): Promise<User> {
+    const user = await this.usersRepository.createUser();
+    const auth = await this.authRepository.createAuth(createAuthDto, user);
+    return auth.user;
   }
 
   issueCode(req) {

@@ -1,16 +1,11 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-kakao';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UsersRepository } from '../../users/users.repository';
 import { AuthProvider } from '../auth-provider.enum';
-import { AuthRepository } from '../auth.repository';
-import { CreateAuthDto } from '../dto/create-auth.dto';
+import { AuthService } from '../auth.service';
+import { Inject } from '@nestjs/common';
 
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
-  constructor(
-    @InjectRepository(UsersRepository) private usersRepository: UsersRepository,
-    @InjectRepository(AuthRepository) private authRepository: AuthRepository,
-  ) {
+  constructor(@Inject('AuthService') private authService: AuthService) {
     super({
       clientID: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_SECRET,
@@ -19,23 +14,17 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   }
 
   async validate(accessToken, refreshToken, profile, done) {
-    console.log('kakao validate');
     const { id } = profile;
+    const auth = await this.authService.getAuth(id);
 
-    const auth = await this.authRepository.findOne(id, {
-      relations: ['user'],
-    });
     if (auth) {
-      console.log('auth', auth);
       done(null, auth.user);
     } else {
-      const createAuthDto: CreateAuthDto = {
+      const user = await this.authService.signUp({
         providerKey: id,
         provider: AuthProvider.KAKAO,
-      };
-      const user = await this.usersRepository.createUser();
-      const auth = await this.authRepository.createAuth(createAuthDto, user);
-      done(null, auth.user);
+      });
+      done(null, user);
     }
   }
 }

@@ -1,16 +1,12 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UsersRepository } from '../../users/users.repository';
+import { Inject, Injectable } from '@nestjs/common';
 import { AuthProvider } from '../auth-provider.enum';
+import { AuthService } from '../auth.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(
-    @InjectRepository(UsersRepository)
-    private usersRepository: UsersRepository,
-  ) {
+  constructor(@Inject('AuthService') private authService: AuthService) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
@@ -25,16 +21,17 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { id, emails } = profile;
-    const { value, verified } = emails[0];
+    const { id } = profile;
 
-    // i;
-    //
-    // const user = await this.usersRepository.createUser({
-    //   provider: AuthProvider.GOOGLE,
-    //   providerKey: id,
-    //   email: verified && value,
-    // });
-    // done(null, user);
+    const auth = await this.authService.getAuth(id);
+    if (auth) {
+      done(null, auth.user);
+    } else {
+      const user = await this.authService.signUp({
+        providerKey: id,
+        provider: AuthProvider.GOOGLE,
+      });
+      done(null, user);
+    }
   }
 }
