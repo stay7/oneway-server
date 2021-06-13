@@ -14,11 +14,12 @@ import { JwtStrategy } from './strategy/jwt-strategy';
 @Module({
   imports: [
     UsersModules,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ secret: `${process.env.JWT_SECRET}` }),
     TypeOrmModule.forFeature([UsersRepository, AuthRepository]),
   ],
   controllers: [AuthController],
   providers: [AuthService, GoogleStrategy, KakaoStrategy, JwtStrategy],
+  exports: [PassportModule, JwtStrategy],
 })
 export class AuthModules {}

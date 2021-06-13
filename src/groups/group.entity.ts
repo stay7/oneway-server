@@ -3,9 +3,12 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from '../users/user.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Group {
@@ -26,4 +29,8 @@ export class Group {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @ManyToOne((_type) => User, (user) => user.groups, { eager: false })
+  @Exclude({ toPlainOnly: true })
+  user: User;
 }

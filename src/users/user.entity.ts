@@ -4,9 +4,11 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Group } from '../groups/group.entity';
 
 @Entity()
 export class User {
@@ -30,4 +32,7 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @OneToMany((_type) => Group, (group) => group.user, { eager: true })
+  groups: Group[];
 }
