@@ -52,4 +52,7 @@ export class AuthController {
     const [accessToken, refreshToken] = this.authService.issueToken(loginDto);
     return { accessToken, refreshToken };
   }
+
+  //renew accesstoken 이라는 handler가 필요
+  //refresh token을 받아서 access token을 주는 용도
 }

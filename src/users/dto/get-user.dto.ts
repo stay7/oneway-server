@@ -1,0 +1,3 @@
+class GetUserDto {
+  id: string;
+}
