@@ -10,6 +10,8 @@ import { AuthRepository } from './auth.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt-strategy';
 import { GroupsRepository } from '../groups/groups.repository';
+import { TokensRepository } from '../tokens/tokens.repository';
+import { DevicesRepository } from '../device/devices.repository';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { GroupsRepository } from '../groups/groups.repository';
       UsersRepository,
       AuthRepository,
       GroupsRepository,
+      TokensRepository,
+      DevicesRepository,
     ]),
   ],
   controllers: [AuthController],
