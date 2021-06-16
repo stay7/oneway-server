@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
@@ -7,6 +7,8 @@ import { LoginDto } from './dto/login.dto';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { User } from '../users/user.entity';
 import { Auth } from './auth.entity';
+import { GroupsRepository } from '../groups/groups.repository';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +17,8 @@ export class AuthService {
     private usersRepository: UsersRepository,
     @InjectRepository(AuthRepository)
     private authRepository: AuthRepository,
+    @InjectRepository(GroupsRepository)
+    private groupRepository: GroupsRepository,
     private jwtService: JwtService,
   ) {}
 
@@ -27,6 +31,11 @@ export class AuthService {
   async signUp(createAuthDto: CreateAuthDto): Promise<User> {
     const user = await this.usersRepository.createUser();
     const auth = await this.authRepository.createAuth(createAuthDto, user);
+    const group = await this.groupRepository.createGroup(
+      { name: 'New Group' },
+      user,
+    );
+    console.log(group);
     return auth.user;
   }
 
@@ -41,20 +50,55 @@ export class AuthService {
     }
   }
 
-  issueToken(loginDto: LoginDto) {
-    const { id, deviceId } = loginDto;
+  issueToken(jwtPayload: JwtPayload) {
+    const { id, deviceId } = jwtPayload;
     const payload = { id, deviceId };
 
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
       secret: process.env.JWT_SECRET,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
     });
 
     const refreshToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
       expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
+    });
+
+    console.log('token issued', accessToken, refreshToken);
+
+    return [accessToken, refreshToken];
+  }
+
+  /*
+   User {
+  id: '9294dc19-115a-46ae-9027-6d41a0dccc5f',
+  timezone: null,
+  lastLoginAt: 2021-06-15T09:24:05.660Z,
+  createdAt: 2021-06-15T09:24:05.660Z,
+  updatedAt: 2021-06-15T09:24:05.660Z,
+  deletedAt: null,
+  groups: [
+    Group {
+      id: 2,
+      name: '',
+      createdAt: 2021-06-15T09:24:05.708Z,
+      updatedAt: 2021-06-15T09:24:05.708Z,
+      deletedAt: null
+
+   */
+
+  renewAccessToken(refreshToken: string) {
+    const verified = this.jwtService.verify(refreshToken, {
       secret: process.env.JWT_SECRET,
     });
 
-    return [accessToken, refreshToken];
+    if (!verified) throw new UnauthorizedException();
+    const { iat, exp, ...payload } = verified;
+
+    const accessToken = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
+    });
+    return { accessToken };
   }
 }

@@ -5,8 +5,8 @@ import { User } from '../users/user.entity';
 
 @EntityRepository(Group)
 export class GroupsRepository extends Repository<Group> {
-  async createGroup(createGroupDto: CreateGroupDto) {
-    const group = this.create({ ...createGroupDto });
+  async createGroup(createGroupDto: CreateGroupDto, user: User) {
+    const group = this.create({ ...createGroupDto, user });
     await this.save(group);
     return group;
   }

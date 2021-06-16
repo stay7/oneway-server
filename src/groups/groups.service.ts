@@ -12,8 +12,8 @@ export class GroupsService {
     private groupsRepository: GroupsRepository,
   ) {}
 
-  createGroup(createGroupDto: CreateGroupDto): Promise<Group> {
-    return this.groupsRepository.createGroup(createGroupDto);
+  createGroup(createGroupDto: CreateGroupDto, user: User): Promise<Group> {
+    return this.groupsRepository.createGroup(createGroupDto, user);
   }
 
   getGroups(user: User): Promise<Group[]> {

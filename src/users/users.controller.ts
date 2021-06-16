@@ -17,7 +17,6 @@ export class UsersController {
 
   @Get()
   getUser(@GetUser() user: User): User {
-    console.log('getUser', user);
     return user;
   }
 }

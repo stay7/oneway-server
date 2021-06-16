@@ -10,6 +10,11 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { JwtPayload } from './jwt-payload.interface';
+import { GetUser } from './get-user.decorator';
+import { User } from '../users/user.entity';
+import { Logger } from 'nestjs-pino';
+import { GetPayload } from './get-payload.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -48,11 +53,15 @@ export class AuthController {
   // code 검증 후 access, refresh 토큰 발급
   @Post('login')
   @UseGuards(AuthGuard('jwt'))
-  login(@Body() loginDto: LoginDto) {
-    const [accessToken, refreshToken] = this.authService.issueToken(loginDto);
+  login(@Body() jwtPayload: JwtPayload) {
+    const [accessToken, refreshToken] = this.authService.issueToken(jwtPayload);
     return { accessToken, refreshToken };
   }
 
-  //renew accesstoken 이라는 handler가 필요
-  //refresh token을 받아서 access token을 주는 용도
+  //refresh token을 body에 넣어서 보내야한다.
+  @Post('renew')
+  renewToken(@Body('refreshToken') refreshToken) {
+    console.log('renew', refreshToken);
+    return this.authService.renewAccessToken(refreshToken);
+  }
 }
