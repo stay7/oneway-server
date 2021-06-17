@@ -14,4 +14,4 @@ const config: TypeOrmModuleOptions = {
   logging: true,
 };
 
-export = config;
+export default config;
