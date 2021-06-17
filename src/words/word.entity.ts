@@ -3,10 +3,23 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Optional } from '@nestjs/common';
+import { Group } from '../groups/group.entity';
+import { Exclude } from 'class-transformer';
+
+export enum NotifyStatus {
+  NOTIFY = 'NOTIFY',
+  CLOSE = 'CLOSE',
+}
+export enum DoneStatus {
+  OPEN = 'OPEN',
+  DONE = 'DONE',
+}
 
 @Entity()
 export class Word {
@@ -16,10 +29,10 @@ export class Word {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   meaning: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Optional()
   usage: string;
 
@@ -36,14 +49,10 @@ export class Word {
   updatedAt: Date;
 
   @DeleteDateColumn()
+  @Exclude()
   deletedAt: Date;
-}
 
-export enum NotifyStatus {
-  NOTIFY = 'NOTIFY',
-  CLOSE = 'CLOSE',
-}
-export enum DoneStatus {
-  OPEN = 'OPEN',
-  DONE = 'DONE',
+  @ManyToOne(() => Group, (group) => group.words)
+  @Exclude()
+  group: Group;
 }

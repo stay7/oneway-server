@@ -1,9 +1,19 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { Word } from './word.entity';
 import { WordsService } from './words.service';
 import { CreateWordDto } from './dto/create-word.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('words')
+@UseGuards(AuthGuard())
 export class WordsController {
   /**
    * 단어 수 변경이 생기면 groups length 변경

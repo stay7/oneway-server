@@ -7,9 +7,9 @@ export class Device {
   @PrimaryColumn()
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Optional()
-  deviceName?: string;
+  deviceName: string;
 
   @ManyToOne((_type) => User)
   user: User;
