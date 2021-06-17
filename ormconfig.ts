@@ -11,6 +11,7 @@ const config: TypeOrmModuleOptions = {
   autoLoadEntities: true,
   synchronize: true, //TODO: production에서는 false로 할 것
   namingStrategy: new SnakeNamingStrategy(),
+  logging: true,
 };
 
 export = config;

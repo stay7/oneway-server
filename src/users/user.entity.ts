@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from '../groups/group.entity';
-import { Token } from '../tokens/token.entity';
+import { Credential } from '../credentials/credential.entity';
 
 @Entity()
 export class User {

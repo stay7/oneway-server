@@ -1,9 +1,17 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
 import { User } from '../users/user.entity';
 import { Exclude } from 'class-transformer';
+import { Device } from '../device/device.entity';
 
 @Entity()
-export class Token {
+export class Credential {
   @PrimaryGeneratedColumn('rowid')
   id: string;
 
@@ -22,4 +30,8 @@ export class Token {
   @ManyToOne(() => User)
   @Exclude({ toPlainOnly: true })
   user: User;
+
+  @OneToOne(() => Device)
+  @JoinColumn()
+  device: Device;
 }
