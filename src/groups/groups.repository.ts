@@ -13,7 +13,7 @@ export class GroupsRepository extends Repository<Group> {
 
   async getGroups(user: User): Promise<Group[]> {
     const query = this.createQueryBuilder(`group`);
-    query.where({ user: user });
+    query.where({ user: user }).leftJoinAndSelect('group.words', 'words');
 
     return await query.getMany();
   }

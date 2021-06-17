@@ -16,7 +16,9 @@ export class GroupsService {
     return this.groupsRepository.createGroup(createGroupDto, user);
   }
 
-  getGroups(user: User): Promise<Group[]> {
-    return this.groupsRepository.getGroups(user);
+  async getGroups(user: User): Promise<Group[]> {
+    const groups = await this.groupsRepository.getGroups(user);
+    console.log(groups);
+    return groups;
   }
 }

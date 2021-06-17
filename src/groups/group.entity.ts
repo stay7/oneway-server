@@ -30,12 +30,13 @@ export class Group {
   updatedAt: Date;
 
   @DeleteDateColumn()
+  @Exclude()
   deletedAt: Date;
 
-  @ManyToOne((_type) => User, (user) => user.groups, { eager: false })
+  @ManyToOne((_type) => User, (user) => user.groups)
   @Exclude({ toPlainOnly: true })
   user: User;
 
-  @OneToMany(() => Word, (word) => word.group)
+  @OneToMany(() => Word, (word) => word.group, { eager: true })
   words: Word[];
 }

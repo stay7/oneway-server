@@ -15,10 +15,6 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('words')
 @UseGuards(AuthGuard())
 export class WordsController {
-  /**
-   * 단어 수 변경이 생기면 groups length 변경
-   */
-
   constructor(private wordService: WordsService) {}
 
   @Post()
