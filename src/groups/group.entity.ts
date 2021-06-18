@@ -23,20 +23,20 @@ export class Group {
   @Column()
   name: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: number;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: number;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   @Exclude()
-  deletedAt: Date;
+  deletedAt: number;
 
-  @ManyToOne((_type) => User, (user) => user.groups)
+  @ManyToOne(() => User, (user) => user.groups)
   @Exclude({ toPlainOnly: true })
   user: User;
 
-  @OneToMany(() => Word, (word) => word.group, { eager: true })
+  @OneToMany(() => Word, (word) => word.group)
   words: Word[];
 }

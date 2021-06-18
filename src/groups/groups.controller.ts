@@ -5,8 +5,6 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../users/user.entity';
-import { Logger } from 'nestjs-pino';
-import { GetPayload } from '../auth/get-payload.decorator';
 
 @Controller('groups')
 @UseGuards(AuthGuard())
@@ -18,6 +16,7 @@ export class GroupsController {
     @Body() createGroupDto: CreateGroupDto,
     @GetUser() user: User,
   ): Promise<Group> {
+    console.log(createGroupDto);
     return this.groupsService.createGroup(createGroupDto, user);
   }
 

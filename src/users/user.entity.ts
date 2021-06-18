@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Group } from '../groups/group.entity';
-import { Credential } from '../credentials/credential.entity';
 
 @Entity()
 export class User {
@@ -24,15 +23,15 @@ export class User {
   })
   lastLoginAt: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @DeleteDateColumn()
+  @DeleteDateColumn({ type: 'timestamptz' })
   deletedAt: Date;
 
-  @OneToMany((_type) => Group, (group) => group.user, { eager: true })
+  @OneToMany(() => Group, (group) => group.user, { eager: true })
   groups: Group[];
 }

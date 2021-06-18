@@ -12,8 +12,16 @@ export class GroupsService {
     private groupsRepository: GroupsRepository,
   ) {}
 
-  createGroup(createGroupDto: CreateGroupDto, user: User): Promise<Group> {
-    return this.groupsRepository.createGroup(createGroupDto, user);
+  async createGroup(
+    createGroupDto: CreateGroupDto,
+    user: User,
+  ): Promise<Group> {
+    const group = await this.groupsRepository.createGroup(createGroupDto, user);
+    const findedGroup = await this.groupsRepository.findOne(group.id, {
+      relations: ['words'],
+    });
+    console.log(findedGroup);
+    return findedGroup;
   }
 
   async getGroups(user: User): Promise<Group[]> {

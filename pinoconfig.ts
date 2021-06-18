@@ -8,6 +8,7 @@ const serializer = {
       method: req['method'],
       params: req['params'],
       headers: {
+        contentType: req.headers['content-type'],
         authorization: req.headers['authorization'],
       },
     };

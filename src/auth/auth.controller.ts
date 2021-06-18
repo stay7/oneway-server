@@ -9,12 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from './jwt-payload.interface';
-import { GetUser } from './get-user.decorator';
-import { User } from '../users/user.entity';
-import { Logger } from 'nestjs-pino';
-import { GetPayload } from './get-payload.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -60,8 +55,8 @@ export class AuthController {
 
   //refresh token을 body에 넣어서 보내야한다.
   @Post('renew')
-  renewToken(@Body('refreshToken') refreshToken) {
-    console.log('renew', refreshToken);
+  renewToken(@Body('refreshToken') refreshToken, @Req() req) {
+    console.log('renew', refreshToken, req.body);
     return this.authService.renewAccessToken(refreshToken);
   }
 }
