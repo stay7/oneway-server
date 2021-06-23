@@ -4,6 +4,7 @@ import { WordsRepository } from './words.repository';
 import { Word } from './word.entity';
 import { CreateWordDto } from './dto/create-word.dto';
 import { GroupsRepository } from '../groups/groups.repository';
+import { UpdateWordDto } from './dto/update-word.dto';
 
 @Injectable()
 export class WordsService {
@@ -25,5 +26,14 @@ export class WordsService {
     } else {
       throw new NotFoundException('존재하지 않는 그룹입니다.');
     }
+  }
+
+  async updateWord(id: string, updateWordDto: UpdateWordDto): Promise<Word> {
+    const word = await this.wordsRepository.findOne(id);
+    if (!word) throw new NotFoundException('찾을 수 없는 단어입니다.');
+
+    const updatedWord = { ...word, ...updateWordDto };
+    await this.wordsRepository.save(updatedWord);
+    return updatedWord;
   }
 }
