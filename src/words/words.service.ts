@@ -36,4 +36,9 @@ export class WordsService {
     await this.wordsRepository.save(updatedWord);
     return updatedWord;
   }
+
+  async deleteWord(id: string) {
+    //TODO: soft delete에 대한 결정 필요
+    return this.wordsRepository.softDelete(id);
+  }
 }

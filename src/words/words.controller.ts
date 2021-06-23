@@ -29,6 +29,11 @@ export class WordsController {
     return this.wordService.updateWord(id, updateWordDto);
   }
 
+  @Delete('/:id')
+  deleteWord(@Param() id) {
+    return this.wordService.deleteWord(id);
+  }
+
   //TODO: Get words
   // @Get()
   // getWord(): Word {}
