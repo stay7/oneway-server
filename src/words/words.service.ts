@@ -17,11 +17,14 @@ export class WordsService {
 
   async createWord(createWordDto: CreateWordDto): Promise<Word> {
     const { groupId } = createWordDto;
-    console.log(groupId);
-    const group = await this.groupsRepository.findOne(groupId);
-    console.log(group);
+    const group = await this.groupsRepository.findOne(groupId, {
+      relations: ['words'],
+    });
+
     if (group) {
-      const word = await this.wordsRepository.createWord(createWordDto, group);
+      const word = await this.wordsRepository.createWord(createWordDto);
+      group.words.push(word);
+      await this.groupsRepository.save(group);
       return word;
     } else {
       throw new NotFoundException('존재하지 않는 그룹입니다.');
