@@ -26,6 +26,7 @@ export class WordsController {
 
   @Patch('/:id')
   updateWord(@Param() id, @Body() updateWordDto: UpdateWordDto) {
+    console.log(id, updateWordDto);
     return this.wordService.updateWord(id, updateWordDto);
   }
 

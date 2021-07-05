@@ -32,12 +32,18 @@ export class WordsService {
   }
 
   async updateWord(id: string, updateWordDto: UpdateWordDto): Promise<Word> {
-    const word = await this.wordsRepository.findOne(id);
+    const word = await this.wordsRepository.findOne(id, {
+      relations: ['group'],
+    });
+    console.log(word);
     if (!word) throw new NotFoundException('찾을 수 없는 단어입니다.');
 
-    const updatedWord = { ...word, ...updateWordDto };
-    await this.wordsRepository.save(updatedWord);
-    return updatedWord;
+    const result = await this.wordsRepository.update(
+      { id: word.id },
+      updateWordDto,
+    );
+
+    return this.wordsRepository.findOne(id);
   }
 
   async deleteWord(id: string) {
