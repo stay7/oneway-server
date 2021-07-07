@@ -12,6 +12,7 @@ import { JwtStrategy } from './strategy/jwt-strategy';
 import { GroupsRepository } from '../groups/groups.repository';
 import { CredentialsRepository } from '../credentials/credentials.repository';
 import { DevicesRepository } from '../device/devices.repository';
+import { FacebookStrategy } from './strategy/facebook.strategy';
 
 @Module({
   imports: [
@@ -26,7 +27,13 @@ import { DevicesRepository } from '../device/devices.repository';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, GoogleStrategy, KakaoStrategy, JwtStrategy],
+  providers: [
+    AuthService,
+    GoogleStrategy,
+    KakaoStrategy,
+    FacebookStrategy,
+    JwtStrategy,
+  ],
   exports: [PassportModule, JwtStrategy],
 })
 export class AuthModules {}

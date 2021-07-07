@@ -28,6 +28,19 @@ export class AuthController {
     return res.redirect(`relay://success?id=${id}&code=${code}`);
   }
 
+  @Get('facebook')
+  @UseGuards(AuthGuard('facebook'))
+  async facebookAuth(@Req() req) {
+    console.log('facebook');
+  }
+
+  @Get('facebook/redirect')
+  @UseGuards(AuthGuard('facebook'))
+  facebookAuthRedirect(@Req() req, @Res() res) {
+    const [id, code] = this.authService.issueCode(req);
+    return res.redirect(`relay://success?id=${id}&code=${code}`);
+  }
+
   @Get('kakao')
   @UseGuards(AuthGuard('kakao'))
   async kakaoAuth(@Req() req) {
