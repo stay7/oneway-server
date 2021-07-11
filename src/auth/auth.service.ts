@@ -88,17 +88,39 @@ export class AuthService {
    */
 
   renewAccessToken(refreshToken: string) {
+    let returnAccess = '';
+    let returnRefresh = refreshToken;
+
     const verified = this.jwtService.verify(refreshToken, {
       secret: process.env.JWT_SECRET,
     });
 
     if (!verified) throw new UnauthorizedException();
-    const { iat, exp, ...payload } = verified;
 
-    const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
-    });
-    return { accessToken };
+    const decoded = this.jwtService.decode(refreshToken);
+    const [id, deviceId, exp] = [
+      decoded['id'],
+      decoded['deviceId'],
+      decoded['exp'],
+    ];
+
+    const CHECK_DAY_MILLIS =
+      parseInt(process.env.REFRESH_TOKEN_RENEW_EXPIRE_DAY) * 3600 * 1000 * 24;
+
+    if (exp * 1000 < Date.now() + CHECK_DAY_MILLIS) {
+      const [access, refresh] = this.issueCode({ id, deviceId });
+      returnAccess = access;
+      returnRefresh = refresh;
+    } else {
+      returnAccess = this.jwtService.sign(
+        { id, deviceId },
+        {
+          secret: process.env.JWT_SECRET,
+          expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
+        },
+      );
+    }
+
+    return { accessToken: returnAccess, refreshToken: returnRefresh };
   }
 }
