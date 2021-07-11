@@ -69,7 +69,6 @@ export class AuthController {
   //refresh token을 body에 넣어서 보내야한다.
   @Post('renew')
   renewToken(@Body('refreshToken') refreshToken, @Req() req) {
-    console.log('renew', refreshToken, req.body);
     return this.authService.renewAccessToken(refreshToken);
   }
 }
