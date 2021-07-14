@@ -11,6 +11,7 @@ const serializer = {
         contentType: req.headers['content-type'],
         authorization: req.headers['authorization'],
       },
+      body: req['raw'].body,
     };
   },
   err: pino.stdSerializers.err,
