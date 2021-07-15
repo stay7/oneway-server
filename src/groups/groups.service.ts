@@ -4,6 +4,7 @@ import { GroupsRepository } from './groups.repository';
 import { Group } from './group.entity';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { User } from '../users/user.entity';
+import { UpdateGroupDto } from './dto/update-group.dto';
 
 @Injectable()
 export class GroupsService {
@@ -28,5 +29,10 @@ export class GroupsService {
     const groups = await this.groupsRepository.getGroups(user);
     console.log(groups);
     return groups;
+  }
+
+  async updateGroup(updateGroupDto: UpdateGroupDto) {
+    const { id, ...partial } = updateGroupDto;
+    return await this.groupsRepository.update(id, partial);
   }
 }

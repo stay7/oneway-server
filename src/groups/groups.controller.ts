@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { Group } from './group.entity';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../users/user.entity';
+import { UpdateGroupDto } from './dto/update-group.dto';
 
 @Controller('groups')
 @UseGuards(AuthGuard())
@@ -23,6 +24,11 @@ export class GroupsController {
   @Get()
   getGroups(@GetUser() user: User): Promise<Group[]> {
     return this.groupsService.getGroups(user);
+  }
+
+  @Patch()
+  updateGroup(@Body() updateGroupDto: UpdateGroupDto) {
+    return this.groupsService.updateGroup(updateGroupDto);
   }
 
   //TODO: Get groups
