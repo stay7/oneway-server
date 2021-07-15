@@ -64,28 +64,8 @@ export class AuthService {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
     });
 
-    console.log('token issued', accessToken, refreshToken);
-
     return [accessToken, refreshToken];
   }
-
-  /*
-   User {
-  id: '9294dc19-115a-46ae-9027-6d41a0dccc5f',
-  timezone: null,
-  lastLoginAt: 2021-06-15T09:24:05.660Z,
-  createdAt: 2021-06-15T09:24:05.660Z,
-  updatedAt: 2021-06-15T09:24:05.660Z,
-  deletedAt: null,
-  groups: [
-    Group {
-      id: 2,
-      name: '',
-      createdAt: 2021-06-15T09:24:05.708Z,
-      updatedAt: 2021-06-15T09:24:05.708Z,
-      deletedAt: null
-
-   */
 
   renewAccessToken(refreshToken: string) {
     let returnAccess = '';

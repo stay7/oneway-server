@@ -46,7 +46,7 @@ export class WordsService {
     return this.wordsRepository.findOne(id);
   }
 
-  async deleteWord(id: string) {
+  async deleteWord(id: string | string[]) {
     //TODO: soft delete에 대한 결정 필요
     return this.wordsRepository.softDelete(id);
   }

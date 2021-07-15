@@ -30,6 +30,11 @@ export class WordsController {
     return this.wordService.updateWord(id, updateWordDto);
   }
 
+  @Delete('/ids')
+  deleteWords(@Body('words') ids) {
+    return this.wordService.deleteWord(ids);
+  }
+
   @Delete('/:id')
   deleteWord(@Param() id) {
     return this.wordService.deleteWord(id);
