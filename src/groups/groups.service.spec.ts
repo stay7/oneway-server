@@ -6,6 +6,7 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { Group } from './group.entity';
 import * as faker from 'faker';
 import { Repository } from 'typeorm';
+import { UpdateGroupDto } from './dto/update-group.dto';
 
 const sampleGroup: Group = {
   id: faker.random.number,
@@ -34,9 +35,9 @@ const mockGroupsRepository = () => ({
     group.user = user;
     return group;
   }),
-  findOne: jest.fn(),
+  findOne: jest.fn((id) => sampleGroup),
   getGroups: jest.fn((user) => user.groups),
-  updateGroups: jest.fn(),
+  save: jest.fn((group) => group),
 });
 
 describe('GroupService', () => {
@@ -72,5 +73,16 @@ describe('GroupService', () => {
 
     expect(groups).toHaveLength(user.groups.length);
     expect(groups).toEqual(user.groups);
+  });
+
+  it('update group', async () => {
+    const newName = faker.random.name;
+    const updateGroupDto: UpdateGroupDto = {
+      id: sampleGroup.id,
+      name: newName,
+    };
+
+    const updated = await groupsService.updateGroup(updateGroupDto);
+    expect(updated.name).toEqual(newName);
   });
 });

@@ -27,7 +27,9 @@ export class GroupsService {
   }
 
   async updateGroup(updateGroupDto: UpdateGroupDto) {
-    const { id, ...partial } = updateGroupDto;
-    return await this.groupsRepository.update(id, partial);
+    const { id, name } = updateGroupDto;
+    const group = await this.groupsRepository.findOne(id);
+    group.name = name;
+    return await this.groupsRepository.save(group);
   }
 }
