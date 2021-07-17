@@ -24,13 +24,13 @@ export class User {
   lastLoginAt: Date;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: Date;
+  createdAt?: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: Date;
+  updatedAt?: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date;
+  deletedAt?: Date;
 
   @OneToMany(() => Group, (group) => group.user, { eager: true })
   groups: Group[];

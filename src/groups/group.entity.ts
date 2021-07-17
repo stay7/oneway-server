@@ -24,19 +24,19 @@ export class Group {
   name: string;
 
   @CreateDateColumn({ type: 'timestamptz' })
-  createdAt: number;
+  createdAt?: number;
 
   @UpdateDateColumn({ type: 'timestamptz' })
-  updatedAt: number;
+  updatedAt?: number;
 
   @DeleteDateColumn({ type: 'timestamptz' })
   @Exclude()
-  deletedAt: number;
+  deletedAt?: number;
 
   @ManyToOne(() => User, (user) => user.groups)
   @Exclude({ toPlainOnly: true })
-  user: User;
+  user?: User;
 
   @OneToMany(() => Word, (word) => word.group)
-  words: Word[];
+  words?: Word[];
 }

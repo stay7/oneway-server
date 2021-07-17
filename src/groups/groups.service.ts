@@ -18,16 +18,11 @@ export class GroupsService {
     user: User,
   ): Promise<Group> {
     const group = await this.groupsRepository.createGroup(createGroupDto, user);
-    const foundGroup = await this.groupsRepository.findOne(group.id, {
-      relations: ['words'],
-    });
-    console.log(foundGroup);
-    return foundGroup;
+    return group;
   }
 
   async getGroups(user: User): Promise<Group[]> {
     const groups = await this.groupsRepository.getGroups(user);
-    console.log(groups);
     return groups;
   }
 
