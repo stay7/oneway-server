@@ -9,6 +9,10 @@ import { User } from '../users/user.entity';
 import { Auth } from './auth.entity';
 import { GroupsRepository } from '../groups/groups.repository';
 import { JwtPayload } from './jwt-payload.interface';
+import { CredentialsRepository } from '../credentials/credentials.repository';
+import { CredentialsService } from '../credentials/credentials.service';
+import { DevicesService } from '../device/devices.service';
+import { Credential } from '../credentials/credential.entity';
 
 @Injectable()
 export class AuthService {
@@ -19,52 +23,48 @@ export class AuthService {
     private authRepository: AuthRepository,
     @InjectRepository(GroupsRepository)
     private groupRepository: GroupsRepository,
+    @InjectRepository(CredentialsRepository)
+    private credentialsRepository,
     private jwtService: JwtService,
+    private credentialsService: CredentialsService,
+    private devicesService: DevicesService,
   ) {}
 
-  async getAuth(id: string): Promise<Auth> {
-    const auth = await this.authRepository.findOne(id, { relations: ['user'] });
-    console.log(auth);
-    return auth;
+  async getAuth(providerKey: string): Promise<Auth> {
+    return await this.authRepository.findOne(providerKey, {
+      relations: ['user'],
+    });
   }
 
-  async signUp(createAuthDto: CreateAuthDto): Promise<User> {
-    const user = await this.usersRepository.createUser();
-    const auth = await this.authRepository.createAuth(createAuthDto, user);
-    const group = await this.groupRepository.createGroup(
-      { name: 'New Group' },
-      user,
-    );
-    console.log(group);
-    return auth.user;
-  }
+  async login(req): Promise<Credential> {
+    const { user, deviceId, deviceName } = req;
 
-  issueCode(req) {
-    if (req.user) {
-      const payload = { id: req.user.id };
-      const code = this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: process.env.CODE_EXPIRE,
-      });
-      return [req.user.id, code];
+    const payload = { id: user.id, deviceId };
+
+    const accessToken = this.credentialsService.issueAccessToken(payload);
+    const refreshToken = this.credentialsService.issueRefreshToken(payload);
+    let device = await this.devicesService.getDevice(deviceId);
+
+    if (!device) {
+      device = await this.devicesService.createDevice({ deviceId, deviceName });
+      return this.credentialsService.createCredential(
+        accessToken,
+        refreshToken,
+        user,
+        device,
+      );
     }
-  }
 
-  issueToken(jwtPayload: JwtPayload) {
-    const { id, deviceId } = jwtPayload;
-    const payload = { id, deviceId };
+    const credential = await this.credentialsService.getCredential(
+      user,
+      device,
+    );
 
-    const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
-    });
-
-    const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
-    });
-
-    return [accessToken, refreshToken];
+    return await this.credentialsRepository.updateCredentialToken(
+      credential,
+      accessToken,
+      refreshToken,
+    );
   }
 
   renewAccessToken(refreshToken: string) {
@@ -88,9 +88,12 @@ export class AuthService {
       parseInt(process.env.REFRESH_TOKEN_RENEW_EXPIRE_DAY) * 3600 * 1000 * 24;
 
     if (exp * 1000 < Date.now() + CHECK_DAY_MILLIS) {
-      const [access, refresh] = this.issueToken({ id, deviceId });
-      returnAccess = access;
-      returnRefresh = refresh;
+      const payload = { id, deviceId };
+      const access = this.credentialsRepository.issueAccessToken(payload);
+      const refresh = this.credentialsRepository.issueRefreshToken(payload);
+
+      returnAccess = access.token;
+      returnRefresh = refresh.token;
     } else {
       returnAccess = this.jwtService.sign(
         { id, deviceId },

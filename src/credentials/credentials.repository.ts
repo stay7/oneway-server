@@ -6,11 +6,7 @@ import { CreateCredentialDto } from './dto/create-credentials.dto';
 
 @EntityRepository(Credential)
 export class CredentialsRepository extends Repository<Credential> {
-  createTokensByDevice(
-    createCredentialDto: CreateCredentialDto,
-    user: User,
-    device: Device,
-  ) {
-    this.create({ ...createCredentialDto, user, device });
+  createTokensByDevice(createCredentialDto: CreateCredentialDto) {
+    this.create(createCredentialDto);
   }
 }

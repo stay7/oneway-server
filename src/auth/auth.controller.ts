@@ -15,60 +15,50 @@ import { JwtPayload } from './jwt-payload.interface';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('google')
-  @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {
-    console.log('google');
+  async redirectBack(req, res) {
+    const credential = await this.authService.login(req.user);
+    const { id, accessToken, refreshToken } = credential;
+
+    const url = new URL('relay://success');
+    url.searchParams.append('id', id);
+    url.searchParams.append('access_token', accessToken);
+    url.searchParams.append('redirect_token', refreshToken);
+    console.log(url);
+    return res.redirect(url);
   }
 
-  @Get('google/redirect')
-  @UseGuards(AuthGuard('google'))
-  googleAuthRedirect(@Req() req, @Res() res) {
-    const [id, code] = this.authService.issueCode(req);
-    return res.redirect(`relay://success?id=${id}&code=${code}`);
+  @Post('renew')
+  renewToken(@Body('refreshToken') refreshToken) {
+    return this.authService.renewAccessToken(refreshToken);
   }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  googleAuth() {}
+
+  @Get('kakao')
+  @UseGuards(AuthGuard('kakao'))
+  kakaoAuth() {}
 
   @Get('facebook')
   @UseGuards(AuthGuard('facebook'))
-  async facebookAuth(@Req() req) {
-    console.log('facebook');
+  facebookAuth() {}
+
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req, @Res() res) {
+    return await this.redirectBack(req, res);
   }
 
   @Get('facebook/redirect')
   @UseGuards(AuthGuard('facebook'))
-  facebookAuthRedirect(@Req() req, @Res() res) {
-    const [id, code] = this.authService.issueCode(req);
-    return res.redirect(`relay://success?id=${id}&code=${code}`);
+  async facebookAuthRedirect(@Req() req, @Res() res) {
+    return await this.redirectBack(req, res);
   }
 
-  @Get('kakao')
-  @UseGuards(AuthGuard('kakao'))
-  async kakaoAuth(@Req() req) {
-    console.log('auth/kakao');
-  }
-
-  /*
-    login을 위한 code(jwt)를 발급
-   */
   @Get('kakao/redirect')
   @UseGuards(AuthGuard('kakao'))
-  kakaoAuthRedirect(@Req() req, @Res() res) {
-    const [id, code] = this.authService.issueCode(req);
-    return res.redirect(`relay://success?id=${id}&code=${code}`);
-  }
-
-  // device_id, code를 받음.
-  // code 검증 후 access, refresh 토큰 발급
-  @Post('login')
-  @UseGuards(AuthGuard('jwt'))
-  login(@Body() jwtPayload: JwtPayload) {
-    const [accessToken, refreshToken] = this.authService.issueToken(jwtPayload);
-    return { accessToken, refreshToken };
-  }
-
-  //refresh token을 body에 넣어서 보내야한다.
-  @Post('renew')
-  renewToken(@Body('refreshToken') refreshToken, @Req() req) {
-    return this.authService.renewAccessToken(refreshToken);
+  async kakaoAuthRedirect(@Req() req, @Res() res) {
+    return await this.redirectBack(req, res);
   }
 }

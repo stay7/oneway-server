@@ -1,12 +1,10 @@
 import { IsString } from 'class-validator';
 
-export class LoginDto {
+class LoginDto {
   @IsString()
   id: string;
-
   @IsString()
   deviceId: string;
-
   @IsString()
   deviceName: string;
 }

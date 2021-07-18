@@ -1,8 +1,8 @@
 import { IsOptional, IsString } from 'class-validator';
 
-export class AddDeviceDto {
+export class CreateDeviceDto {
   @IsString()
-  id: string;
+  deviceId: string;
 
   @IsOptional()
   deviceName: string;

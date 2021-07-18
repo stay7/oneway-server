@@ -3,10 +3,14 @@ import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Inject, Injectable } from '@nestjs/common';
 import { AuthProvider } from '../auth-provider.enum';
 import { AuthService } from '../auth.service';
+import { UsersService } from '../../users/users.service';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(@Inject('AuthService') private authService: AuthService) {
+  constructor(
+    @Inject('AuthService') private authService: AuthService,
+    @Inject('UsersService') private usersService: UsersService,
+  ) {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
@@ -27,7 +31,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     if (auth) {
       done(null, auth.user);
     } else {
-      const user = await this.authService.signUp({
+      const user = await this.usersService.signUp({
         providerKey: id,
         provider: AuthProvider.GOOGLE,
       });
