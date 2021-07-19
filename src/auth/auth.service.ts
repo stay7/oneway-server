@@ -22,7 +22,7 @@ export class AuthService {
     @InjectRepository(AuthRepository)
     private authRepository: AuthRepository,
     @InjectRepository(GroupsRepository)
-    private groupRepository: GroupsRepository,
+    private groupsRepository: GroupsRepository,
     @InjectRepository(CredentialsRepository)
     private credentialsRepository,
     private jwtService: JwtService,
@@ -65,6 +65,16 @@ export class AuthService {
       accessToken,
       refreshToken,
     );
+  }
+
+  async signUp(createAuthDto: CreateAuthDto): Promise<User> {
+    const user = await this.usersRepository.createUser();
+    const auth = await this.authRepository.createAuth(createAuthDto, user);
+    const group = await this.groupsRepository.createGroup(
+      { name: 'New Group' },
+      user,
+    );
+    return auth.user;
   }
 
   renewAccessToken(refreshToken: string) {

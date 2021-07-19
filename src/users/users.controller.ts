@@ -10,10 +10,7 @@ import { LoginDto } from '../auth/dto/login.dto';
 @Controller('user')
 @UseGuards(AuthGuard())
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly authSerivce: AuthService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   //TODO: add users
   // async addUser(): User {}
