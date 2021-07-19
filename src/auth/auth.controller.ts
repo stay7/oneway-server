@@ -19,7 +19,7 @@ export class AuthController {
     const credential = await this.authService.login(req.user);
     const { id, accessToken, refreshToken } = credential;
 
-    const url = new URL('relay://success');
+    const url = new URL('oneway://success');
     url.searchParams.append('id', id);
     url.searchParams.append('access_token', accessToken);
     url.searchParams.append('redirect_token', refreshToken);
