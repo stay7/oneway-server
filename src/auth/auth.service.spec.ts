@@ -40,5 +40,12 @@ describe('AuthService', () => {
 
   it('is defined', () => {
     expect(authService).toBeDefined();
+    expect(CredentialsService).toBeDefined();
+    expect(DevicesService).toBeDefined();
+    expect(UsersRepository).toBeDefined();
+    expect(AuthRepository).toBeDefined();
+    expect(GroupsRepository).toBeDefined();
+    expect(DevicesRepository).toBeDefined();
+    expect(CredentialsRepository).toBeDefined();
   });
 });
