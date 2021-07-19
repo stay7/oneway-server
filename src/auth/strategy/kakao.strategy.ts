@@ -6,10 +6,7 @@ import { Inject } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
 
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
-  constructor(
-    @Inject('AuthService') private authService: AuthService,
-    @Inject('UserService') private usersService: UsersService,
-  ) {
+  constructor(@Inject('AuthService') private authService: AuthService) {
     super({
       clientID: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_SECRET,
@@ -24,7 +21,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     if (auth) {
       done(null, auth.user);
     } else {
-      const user = await this.usersService.signUp({
+      const user = await this.authService.signUp({
         providerKey: id,
         provider: AuthProvider.KAKAO,
       });

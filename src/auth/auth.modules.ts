@@ -13,6 +13,10 @@ import { GroupsRepository } from '../groups/groups.repository';
 import { CredentialsRepository } from '../credentials/credentials.repository';
 import { DevicesRepository } from '../device/devices.repository';
 import { FacebookStrategy } from './strategy/facebook.strategy';
+import { CredentialsService } from '../credentials/credentials.service';
+import { DevicesService } from '../device/devices.service';
+import { UsersService } from '../users/users.service';
+import { UsersModules } from '../users/users.modules';
 
 @Module({
   imports: [
@@ -33,6 +37,8 @@ import { FacebookStrategy } from './strategy/facebook.strategy';
     KakaoStrategy,
     FacebookStrategy,
     JwtStrategy,
+    CredentialsService,
+    DevicesService,
   ],
   exports: [PassportModule, JwtStrategy],
 })
