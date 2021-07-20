@@ -3,16 +3,17 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
+
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { User } from '../users/user.entity';
 import { Auth } from './auth.entity';
 import { GroupsRepository } from '../groups/groups.repository';
-import { JwtPayload } from './jwt-payload.interface';
 import { CredentialsRepository } from '../credentials/credentials.repository';
 import { CredentialsService } from '../credentials/credentials.service';
 import { DevicesService } from '../device/devices.service';
 import { Credential } from '../credentials/credential.entity';
+import { GetTokenDto } from './dto/get-token.dto';
+import { Device } from '../device/device.entity';
 
 @Injectable()
 export class AuthService {
@@ -36,44 +37,38 @@ export class AuthService {
     });
   }
 
-  async login(req): Promise<Credential> {
-    const { user, deviceId, deviceName } = req;
+  async getToken(getTokenDto: GetTokenDto) {
+    const { id, deviceId, deviceName } = getTokenDto;
+    let credential: Credential;
+    let device: Device;
 
-    const payload = { id: user.id, deviceId };
+    const user = await this.usersRepository.findOne(id);
+    if (!user) throw new UnauthorizedException();
 
-    const accessToken = this.credentialsService.issueAccessToken(payload);
-    const refreshToken = this.credentialsService.issueRefreshToken(payload);
-    let device = await this.devicesService.getDevice(deviceId);
+    device = await this.devicesService.getDevice(user, deviceId);
+    if (!device)
+      device = await this.devicesService.createDevice(user, {
+        deviceId,
+        deviceName,
+      });
 
-    if (!device) {
-      device = await this.devicesService.createDevice({ deviceId, deviceName });
-      return this.credentialsService.createCredential(
-        accessToken,
-        refreshToken,
-        user,
-        device,
-      );
-    }
+    credential = await this.credentialsService.getCredential(user, device);
+    if (!credential)
+      credential = await this.credentialsService.createCredential(user, device);
 
-    const credential = await this.credentialsService.getCredential(
-      user,
-      device,
-    );
+    if (credential.isExpired)
+      credential = await this.credentialsService.renewCredential(credential);
 
-    return await this.credentialsRepository.updateCredentialToken(
-      credential,
-      accessToken,
-      refreshToken,
-    );
+    return {
+      accessToken: credential.accessToken,
+      refreshToken: credential.refreshToken,
+    };
   }
 
-  async signUp(createAuthDto: CreateAuthDto): Promise<User> {
+  async createNewUser(createAuthDto: CreateAuthDto): Promise<User> {
     const user = await this.usersRepository.createUser();
     const auth = await this.authRepository.createAuth(createAuthDto, user);
-    const group = await this.groupsRepository.createGroup(
-      { name: 'New Group' },
-      user,
-    );
+    await this.groupsRepository.createGroup({ name: 'New Group' }, user);
     return auth.user;
   }
 

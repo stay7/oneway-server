@@ -9,22 +9,19 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { JwtPayload } from './jwt-payload.interface';
+import { GetTokenDto } from './dto/get-token.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   async redirectBack(req, res) {
-    const credential = await this.authService.login(req.user);
-    const { id, accessToken, refreshToken } = credential;
+    return res.redirect(new URL('oneway://success'));
+  }
 
-    const url = new URL('oneway://success');
-    url.searchParams.append('id', id);
-    url.searchParams.append('access_token', accessToken);
-    url.searchParams.append('redirect_token', refreshToken);
-    console.log(url);
-    return res.redirect(url);
+  @Post('token')
+  async getToken(@Body() getTokenDto: GetTokenDto) {
+    return await this.authService.getToken(getTokenDto);
   }
 
   @Post('renew')

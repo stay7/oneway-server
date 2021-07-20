@@ -34,4 +34,11 @@ export class Credential {
   @OneToOne(() => Device)
   @JoinColumn()
   device: Device;
+
+  get isExpired() {
+    return (
+      this.accessTokenExpire < new Date() ||
+      this.refreshTokenExpire < new Date()
+    );
+  }
 }

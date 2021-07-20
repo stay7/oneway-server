@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/user.entity';
 import { Device } from '../device/device.entity';
 import { Token } from '../types/token';
+import { Credential } from './credential.entity';
 
 @Injectable()
 export class CredentialsService {
@@ -15,44 +16,47 @@ export class CredentialsService {
     private jwtService: JwtService,
   ) {}
 
-  async createCredential(
-    accessToken: Token,
-    refreshToken: Token,
-    user: User,
-    device: Device,
-  ) {
-    const accessTokenExpire = new Date();
-    const refreshTokenExpire = new Date();
-    const credential = this.credentialsRepository.create({
-      accessToken: accessToken.token,
-      accessTokenExpire,
-      refreshToken: accessToken.token,
-      refreshTokenExpire,
-      user,
-      device,
-    });
-    return await this.credentialsRepository.save(credential);
-  }
-
   async getCredential(user: User, device: Device) {
     return await this.credentialsRepository.findOne({
       where: { user, device },
     });
   }
 
-  async updateCredentialToken(
-    credential,
-    accessToken: Token,
-    refreshToken: Token,
-  ) {
+  async createCredential(user: User, device: Device): Promise<Credential> {
+    const jwtPayload = { id: user.id, deviceId: device.id };
+    const accessToken = this.issueAccessToken(jwtPayload);
+    const refreshToken = this.issueRefreshToken(jwtPayload);
+    console.log(accessToken.expireDate);
+
+    const credential = this.credentialsRepository.create({
+      accessToken: accessToken.token,
+      accessTokenExpire: accessToken.expireDate,
+      refreshToken: refreshToken.token,
+      refreshTokenExpire: refreshToken.expireDate,
+      user,
+      device,
+    });
+    return await this.credentialsRepository.save(credential);
+  }
+
+  async renewCredential(credential: Credential): Promise<Credential> {
+    console.log('renew credential', credential);
+
+    const jwtPayload = {
+      id: credential.user.id,
+      deviceId: credential.device.id,
+    };
+    const accessToken = this.issueAccessToken(jwtPayload);
+    const refreshToken = this.issueRefreshToken(jwtPayload);
+
     credential.accessToken = accessToken.token;
-    credential.accessTokenExpire = accessToken.expireDate;
     credential.refreshToken = refreshToken.token;
+    credential.accessTokenExpire = accessToken.expireDate;
     credential.refreshTokenExpire = refreshToken.expireDate;
     return await this.credentialsRepository.save(credential);
   }
 
-  issueAccessToken(payload: JwtPayload): Token {
+  private issueAccessToken(payload: JwtPayload): Token {
     const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
@@ -60,15 +64,11 @@ export class CredentialsService {
     return new Token(token);
   }
 
-  issueRefreshToken(payload: JwtPayload): Token {
+  private issueRefreshToken(payload: JwtPayload): Token {
     const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
       expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
     });
     return new Token(token);
-  }
-
-  isValid(token: Token) {
-    const verified = this.jwtService.verify(token.token);
   }
 }

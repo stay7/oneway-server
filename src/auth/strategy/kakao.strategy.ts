@@ -3,7 +3,6 @@ import { Strategy } from 'passport-kakao';
 import { AuthProvider } from '../auth-provider.enum';
 import { AuthService } from '../auth.service';
 import { Inject } from '@nestjs/common';
-import { UsersService } from '../../users/users.service';
 
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   constructor(@Inject('AuthService') private authService: AuthService) {
@@ -18,14 +17,12 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     const { id } = profile;
     const auth = await this.authService.getAuth(id);
 
-    if (auth) {
-      done(null, auth.user);
-    } else {
-      const user = await this.authService.signUp({
-        providerKey: id,
-        provider: AuthProvider.KAKAO,
-      });
-      done(null, user);
-    }
+    if (auth) return done(null, auth.user);
+
+    const user = await this.authService.createNewUser({
+      providerKey: id,
+      provider: AuthProvider.KAKAO,
+    });
+    return done(null, user);
   }
 }

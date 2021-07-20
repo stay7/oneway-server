@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DevicesRepository } from './devices.repository';
 import { CreateDeviceDto } from './dto/add-device.dto';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class DevicesService {
@@ -10,13 +11,17 @@ export class DevicesService {
     private devicesRepository: DevicesRepository,
   ) {}
 
-  async getDevice(deviceId: string) {
-    return await this.devicesRepository.findOne(deviceId);
+  async getDevice(user: User, deviceId: string) {
+    return await this.devicesRepository.findOne(deviceId, { where: { user } });
   }
 
-  async createDevice(createDeviceDto: CreateDeviceDto) {
+  async createDevice(user: User, createDeviceDto: CreateDeviceDto) {
     const { deviceId, deviceName } = createDeviceDto;
-    const device = this.devicesRepository.create({ id: deviceId, deviceName });
+    const device = this.devicesRepository.create({
+      id: deviceId,
+      deviceName,
+      user,
+    });
     return await this.devicesRepository.save(device);
   }
 }
