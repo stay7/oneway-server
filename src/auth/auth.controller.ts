@@ -16,10 +16,15 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   async redirectBack(req, res) {
-    return res.redirect(new URL('oneway://success'));
+    const { user } = req;
+    const tempToken = this.authService.issueTemporaryToken(user);
+    return res.redirect(
+      new URL(`oneway://success?id=${user.id}&temp_token=${tempToken}`),
+    );
   }
 
   @Post('token')
+  @UseGuards(AuthGuard())
   async getToken(@Body() getTokenDto: GetTokenDto) {
     return await this.authService.getToken(getTokenDto);
   }

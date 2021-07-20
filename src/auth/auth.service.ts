@@ -65,6 +65,17 @@ export class AuthService {
     };
   }
 
+  issueTemporaryToken(user: User) {
+    if (!user) throw new UnauthorizedException();
+    return this.jwtService.sign(
+      { id: user.id },
+      {
+        secret: process.env.JWT_SECRET,
+        expiresIn: process.env.TEMP_TOKEN_EXPIRE,
+      },
+    );
+  }
+
   async createNewUser(createAuthDto: CreateAuthDto): Promise<User> {
     const user = await this.usersRepository.createUser();
     const auth = await this.authRepository.createAuth(createAuthDto, user);

@@ -15,6 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload, done: VerifiedCallback) {
+    console.log('jwt strategy validate');
     const { id, deviceId } = payload;
     //TODO device와 연관되는지 확인
     const user = await this.usersRepository.findOne(id);
