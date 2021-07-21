@@ -94,6 +94,7 @@
     ],
     "coverageDirectory": "../coverage",
     "collectCoverage": true,
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFiles": ["dotenv/config"]
   }
 }

@@ -1,7 +1,7 @@
 import { AuthService } from './auth.service';
 import { Test } from '@nestjs/testing';
 import { UsersRepository } from '../users/users.repository';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthRepository } from './auth.repository';
 import { GroupsRepository } from '../groups/groups.repository';
 import { CredentialsRepository } from '../credentials/credentials.repository';
@@ -45,6 +45,7 @@ const mockDevicesRepository = () => ({});
 
 describe('AuthService', () => {
   let authService: AuthService;
+  let jwtService: JwtService;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -64,6 +65,7 @@ describe('AuthService', () => {
       ],
     }).compile();
     authService = module.get(AuthService);
+    jwtService = module.get(JwtService);
   });
 
   it('is defined', () => {
@@ -84,5 +86,21 @@ describe('AuthService', () => {
     };
     const user = await authService.createNewUser(createAuthDto);
     expect(user).toHaveProperty('id');
+  });
+
+  it('issue temporary token', async () => {
+    const user = await mockUsersRepository().createUser();
+    const spyJwtService = jest.spyOn(jwtService, 'sign');
+    const token = authService.issueTemporaryToken(user);
+
+    expect(spyJwtService).toBeCalledTimes(1);
+    expect(spyJwtService).toBeCalledWith(
+      { id: user.id },
+      {
+        secret: process.env.JWT_SECRET,
+        expiresIn: process.env.TEMP_TOKEN_EXPIRE,
+      },
+    );
+    expect(token).toBe(token);
   });
 });
