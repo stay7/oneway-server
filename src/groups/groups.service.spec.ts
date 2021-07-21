@@ -9,20 +9,19 @@ import { Repository } from 'typeorm';
 import { UpdateGroupDto } from './dto/update-group.dto';
 
 const sampleGroup: Group = {
-  id: faker.random.number,
-  name: faker.random.name,
-  createdAt: faker.random.date,
-  updatedAt: faker.random.date,
-  deletedAt: faker.random.date,
+  id: faker.datatype.number(),
+  name: faker.name.findName(),
+  createdAt: faker.date.recent().getTime(),
+  updatedAt: faker.date.recent().getTime(),
   words: [],
 };
 
 const user: User = {
-  id: faker.random.uuid,
-  timezone: faker.random.timezone,
-  lastLoginAt: faker.random.date,
-  createdAt: faker.random.date,
-  updatedAt: faker.random.date,
+  id: faker.datatype.uuid(),
+  timezone: faker.address.timeZone(),
+  lastLoginAt: faker.date.recent(),
+  createdAt: faker.date.recent(),
+  updatedAt: faker.date.recent(),
   groups: [sampleGroup],
 };
 
@@ -30,7 +29,7 @@ const mockGroupsRepository = () => ({
   createGroup: jest.fn((createGroupDto: CreateGroupDto, user: User) => {
     const group = new Group();
     const { name } = createGroupDto;
-    group.id = faker.random.uuid;
+    group.id = faker.datatype.number();
     group.name = name;
     group.user = user;
     return group;
@@ -76,7 +75,7 @@ describe('GroupService', () => {
   });
 
   it('update group', async () => {
-    const newName = faker.random.name;
+    const newName = faker.lorem.word();
     const updateGroupDto: UpdateGroupDto = {
       id: sampleGroup.id,
       name: newName,
