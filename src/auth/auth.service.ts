@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsersRepository } from '../users/users.repository';
 import { AuthRepository } from './auth.repository';
@@ -83,43 +87,16 @@ export class AuthService {
     return auth.user;
   }
 
-  renewAccessToken(refreshToken: string) {
-    let returnAccess = '';
-    let returnRefresh = refreshToken;
+  async renewAccessToken(refreshToken: string) {
+    let credential = await this.credentialsService.getCredentialByRefreshToken(
+      refreshToken,
+    );
+    if (!credential) throw new NotFoundException();
 
-    const verified = this.jwtService.verify(refreshToken, {
-      secret: process.env.JWT_SECRET,
-    });
-
-    if (!verified) throw new UnauthorizedException();
-
-    const decoded = this.jwtService.decode(refreshToken);
-    const [id, deviceId, exp] = [
-      decoded['id'],
-      decoded['deviceId'],
-      decoded['exp'],
-    ];
-
-    const CHECK_DAY_MILLIS =
-      parseInt(process.env.REFRESH_TOKEN_RENEW_EXPIRE_DAY) * 3600 * 1000 * 24;
-
-    if (exp * 1000 < Date.now() + CHECK_DAY_MILLIS) {
-      const payload = { id, deviceId };
-      const access = this.credentialsRepository.issueAccessToken(payload);
-      const refresh = this.credentialsRepository.issueRefreshToken(payload);
-
-      returnAccess = access.token;
-      returnRefresh = refresh.token;
-    } else {
-      returnAccess = this.jwtService.sign(
-        { id, deviceId },
-        {
-          secret: process.env.JWT_SECRET,
-          expiresIn: process.env.ACCESS_TOKEN_EXPIRE,
-        },
-      );
-    }
-
-    return { accessToken: returnAccess, refreshToken: returnRefresh };
+    credential = await this.credentialsService.renewAccessToken(credential);
+    return {
+      accessToken: credential.accessToken,
+      refreshToken: credential.refreshToken,
+    };
   }
 }

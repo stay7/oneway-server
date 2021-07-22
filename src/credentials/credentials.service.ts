@@ -19,7 +19,17 @@ export class CredentialsService {
   async getCredential(user: User, device: Device) {
     return await this.credentialsRepository.findOne({
       where: { user, device },
+      relations: ['user', 'device'],
     });
+  }
+
+  async getCredentialByRefreshToken(refreshToken: string) {
+    return await this.credentialsRepository.findOne(
+      {
+        refreshToken: refreshToken,
+      },
+      { relations: ['user', 'device'] },
+    );
   }
 
   async createCredential(user: User, device: Device): Promise<Credential> {
@@ -36,6 +46,18 @@ export class CredentialsService {
       user,
       device,
     });
+    return await this.credentialsRepository.save(credential);
+  }
+
+  async renewAccessToken(credential: Credential) {
+    console.log(credential);
+    const jwtPayload = {
+      id: credential.user.id,
+      deviceId: credential.device.id,
+    };
+    const accessToken = this.issueAccessToken(jwtPayload);
+    credential.accessToken = accessToken.token;
+    credential.accessTokenExpire = accessToken.expireDate;
     return await this.credentialsRepository.save(credential);
   }
 
@@ -70,5 +92,10 @@ export class CredentialsService {
       expiresIn: process.env.REFRESH_TOKEN_EXPIRE,
     });
     return new Token(token);
+  }
+
+  shouldRenewRefreshToken(refreshTokenExpireDate: Date) {
+    const ONE_DAY_MILLIS = 3600 * 24 * 1000;
+    return refreshTokenExpireDate.getTime() < Date.now() + ONE_DAY_MILLIS;
   }
 }

@@ -4,8 +4,7 @@ export class Token {
   constructor(public token: string) {}
 
   get expireDate() {
-    console.log(this.token);
-    const decodedToken = jwt.decode(this.token);
-    return new Date(decodedToken['exp']);
+    const decoded = jwt.decode(this.token);
+    return new Date(decoded['exp'] * 1000);
   }
 }
