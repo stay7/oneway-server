@@ -17,13 +17,11 @@ export class GroupsService {
     createGroupDto: CreateGroupDto,
     user: User,
   ): Promise<Group> {
-    const group = await this.groupsRepository.createGroup(createGroupDto, user);
-    return group;
+    return await this.groupsRepository.createGroup(createGroupDto, user);
   }
 
   async getGroups(user: User): Promise<Group[]> {
-    const groups = await this.groupsRepository.getGroups(user);
-    return groups;
+    return await this.groupsRepository.getGroups(user);
   }
 
   async updateGroup(updateGroupDto: UpdateGroupDto) {
@@ -31,5 +29,9 @@ export class GroupsService {
     const group = await this.groupsRepository.findOne(id);
     group.name = name;
     return await this.groupsRepository.save(group);
+  }
+
+  async deleteGroup(groupId: number) {
+    return await this.groupsRepository.delete(groupId);
   }
 }

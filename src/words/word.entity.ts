@@ -51,6 +51,6 @@ export class Word {
   @Exclude()
   deletedAt: Date;
 
-  @ManyToOne(() => Group, (group) => group.words)
+  @ManyToOne(() => Group, (group) => group.words, { onDelete: 'CASCADE' })
   group: Group;
 }

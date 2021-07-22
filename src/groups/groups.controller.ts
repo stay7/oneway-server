@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { Group } from './group.entity';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
@@ -29,6 +38,11 @@ export class GroupsController {
   @Patch()
   updateGroup(@Body() updateGroupDto: UpdateGroupDto) {
     return this.groupsService.updateGroup(updateGroupDto);
+  }
+
+  @Delete()
+  deleteGroup(@Param('id') groupId: number) {
+    return this.groupsService.deleteGroup(groupId);
   }
 
   //TODO: Get groups

@@ -23,7 +23,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       autoLoadEntities: true,
       synchronize: process.env.TYPEORM_SYNCHRONIZE == 'true', //TODO: production에서는 false로 할 것
       namingStrategy: new SnakeNamingStrategy(),
-      // logging: true,
+      logging: true,
     }),
     AuthModules,
     WordsModule,
